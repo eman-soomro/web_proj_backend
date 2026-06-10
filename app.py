@@ -1,0 +1,30 @@
+from flask import Flask, request, jsonify
+from training import TrainingAbstraction
+from rag import TrendRAG
+
+app = Flask(__name__)
+
+# Initialize RAG
+rag = TrendRAG()
+
+@app.route("/forecast", methods=["POST"])
+def forecast():
+    data = request.json
+    domain = data.get("domain", "general")
+    keywords = data.get("keywords", [])
+    horizon = data.get("prediction_horizon", 30)
+
+    trainer = TrainingAbstraction(domain, keywords, horizon)
+    results = trainer.run_training_pipeline()
+    return jsonify(results)
+
+@app.route("/rag", methods=["POST"])
+def rag_query():
+    data = request.json
+    keyword = data.get("keyword")
+    rag.ingest_from_semantic_scholar(keyword, limit=10)
+    results = rag.query(keyword, top_k=5)
+    return jsonify(results)
+
+if __name__ == "__main__":
+    app.run(debug=True)

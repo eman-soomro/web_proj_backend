@@ -1,0 +1,8 @@
+flask
+gunicorn
+plotly
+prophet
+sentence-transformers
+requests
+weaviate-client
+matplotlib
