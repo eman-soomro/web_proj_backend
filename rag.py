@@ -1,6 +1,7 @@
 import os
 import weaviate
 from weaviate.auth import AuthApiKey
+from weaviate.collections.config import Property, DataType
 import requests
 
 
@@ -20,11 +21,11 @@ class TrendRAG:
             self.client.collections.create(
                 name="Paper",
                 properties=[
-                    {"name": "title", "dataType": "text"},
-                    {"name": "abstract", "dataType": "text"},
-                    {"name": "year", "dataType": "int"},
-                    {"name": "authors", "dataType": "text"},
-                    {"name": "citations", "dataType": "int"}
+                    Property(name="title", data_type=DataType.TEXT),
+                    Property(name="abstract", data_type=DataType.TEXT),
+                    Property(name="year", data_type=DataType.INT),
+                    Property(name="authors", data_type=DataType.TEXT),
+                    Property(name="citations", data_type=DataType.INT),
                 ]
             )
 
@@ -56,4 +57,3 @@ class TrendRAG:
             limit=top_k
         )
         return results.objects
-
