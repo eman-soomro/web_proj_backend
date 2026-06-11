@@ -1,8 +1,10 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS   
 from training import TrainingAbstraction
 from rag import TrendRAG
 
 app = Flask(__name__)
+CORS(app, origins=["https://web-proj-frontend.vercel.app"])  # <-- allow your Vercel frontend
 
 # Initialize RAG
 rag = TrendRAG()
