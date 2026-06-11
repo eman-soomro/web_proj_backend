@@ -1,9 +1,10 @@
 flask
 gunicorn
-plotly
 prophet
-sentence-transformers
-requests
-weaviate-client
-matplotlib
 pytrends
+sentence-transformers
+weaviate-client
+requests
+matplotlib
+pandas
+plotly
