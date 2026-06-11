@@ -7,3 +7,4 @@ weaviate-client
 requests
 matplotlib
 pandas
+flask-cors
