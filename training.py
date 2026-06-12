@@ -2,16 +2,9 @@ import os
 import time
 from pytrends.request import TrendReq  
 
-
 class TrainingAbstraction:
 
-    def __init__(
-        self,
-        domain,
-        keywords,
-        prediction_horizon=30,
-        sleep_time=2
-    ):
+    def __init__(self, domain, keywords, prediction_horizon=30, sleep_time=2):
         self.domain = domain
         self.keywords = keywords
         self.prediction_horizon = prediction_horizon
@@ -20,7 +13,9 @@ class TrainingAbstraction:
         self.data = None
         self.results = {}
 
-        os.makedirs("graphs", exist_ok=True)
+        # Save graphs inside Flask's static folder
+        self.graph_dir = os.path.join(os.path.dirname(__file__), "static", "graphs")
+        os.makedirs(self.graph_dir, exist_ok=True)
 
     def _ingest_data(self):
         pytrends = TrendReq()
@@ -46,11 +41,13 @@ class TrainingAbstraction:
         plt.legend()
         plt.grid(True)
 
-        filename = f"graphs/{keyword.replace(' ', '_')}_forecast.png"
-        plt.savefig(filename, dpi=300, bbox_inches="tight")
+        filename = f"{keyword.replace(' ', '_')}_forecast.png"
+        filepath = os.path.join(self.graph_dir, filename)
+        plt.savefig(filepath, dpi=300, bbox_inches="tight")
         plt.close()
 
-        return filename
+        # Return a public URL path
+        return f"/static/graphs/{filename}"
 
     def _forecast_keyword(self, keyword):
         import pandas as pd
@@ -79,14 +76,14 @@ class TrainingAbstraction:
         forecast_interest = float(forecast_future["yhat"].mean())
         change_percent = ((forecast_interest - current_interest) / max(current_interest, 1)) * 100
 
-        graph_path = self._plot_forecast(keyword, prophet_df, forecast_future)
+        graph_url = self._plot_forecast(keyword, prophet_df, forecast_future)
 
         return {
             "trend": "up" if change_percent > 0 else "down" if change_percent < 0 else "flat",
             "current_interest": round(current_interest, 2),
             "forecast_interest": round(forecast_interest, 2),
             "change_percent": round(change_percent, 2),
-            "graph": graph_path,
+            "graph": graph_url,  # <-- now a public URL
             "forecast": [
                 {"date": str(row["ds"].date()), "predicted_interest": round(float(row["yhat"]), 2)}
                 for _, row in forecast_future.iterrows()
