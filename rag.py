@@ -1,10 +1,8 @@
 import os
 import requests
 
-
 class TrendRAG:
     def __init__(self):
-        # Delay client and model initialization
         self.client = None
         self.model = None
 
@@ -47,13 +45,16 @@ class TrendRAG:
         if response.status_code == 200:
             papers = response.json().get("data", [])
             for paper in papers:
-                client.collections.get("Paper").data.insert({
-                    "title": paper.get("title"),
-                    "abstract": paper.get("abstract", ""),
-                    "year": paper.get("year", 0),
-                    "authors": ", ".join([a.get("name") for a in paper.get("authors", [])]),
-                    "citations": paper.get("citationCount", 0)
-                })
+                try:
+                    client.collections.get("Paper").data.insert({
+                        "title": paper.get("title", ""),
+                        "abstract": paper.get("abstract", ""),
+                        "year": paper.get("year", 0),
+                        "authors": ", ".join([a.get("name", "") for a in paper.get("authors", [])]),
+                        "citations": paper.get("citationCount", 0)
+                    })
+                except Exception as e:
+                    print("Insert failed:", e)
 
     def query(self, keyword, top_k=5):
         client = self.get_client()
