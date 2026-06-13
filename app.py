@@ -5,7 +5,7 @@ from rag import TrendRAG
 import traceback
 
 app = Flask(__name__)
-CORS(app, origins=["https://web-proj-frontend.vercel.app"]) 
+CORS(app) 
 
 # Initialize RAG
 rag = TrendRAG()
