@@ -10,7 +10,6 @@ class TrendRAG:
         if self.client is None:
             import weaviate
             from weaviate.auth import AuthApiKey
-            from weaviate.collections.config import Property, DataType
 
             cluster_url = os.getenv("WEAVIATE_CLUSTER_URL")
             api_key = os.getenv("WEAVIATE_API_KEY")
@@ -30,11 +29,11 @@ class TrendRAG:
                 self.client.collections.create(
                     name="Paper",
                     properties=[
-                        Property(name="title", data_type=DataType.TEXT),
-                        Property(name="abstract", data_type=DataType.TEXT),
-                        Property(name="year", data_type=DataType.INT),
-                        Property(name="authors", data_type=DataType.TEXT),
-                        Property(name="citations", data_type=DataType.INT),
+                        {"name": "title", "dataType": "text", "tokenization": "word"},
+                        {"name": "abstract", "dataType": "text", "tokenization": "word"},
+                        {"name": "year", "dataType": "int"},
+                        {"name": "authors", "dataType": "text", "tokenization": "word"},
+                        {"name": "citations", "dataType": "int"},
                     ]
                 )
         return self.client
