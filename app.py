@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from training import TrainingAbstraction
 from rag import TrendRAG
+import traceback
 
 app = Flask(__name__)
 CORS(app, origins=["https://web-proj-frontend.vercel.app"]) 
@@ -25,7 +26,8 @@ def forecast():
         results = trainer.run_training_pipeline()
         return jsonify(results)
     except Exception as e:
-        # Return a clear error instead of generic 500
+        print("Forecast error:", e)
+        traceback.print_exc()   # <-- full stack trace in Render logs
         return jsonify({"error": f"Forecast failed: {str(e)}"}), 500
 
 @app.route("/rag", methods=["POST"])
@@ -40,7 +42,8 @@ def rag_query():
         results = rag.query(keyword, top_k=5)
         return jsonify(results)
     except Exception as e:
-        # Return a clear error instead of generic 500
+        print("RAG error:", e)
+        traceback.print_exc()   # <-- full stack trace in Render logs
         return jsonify({"error": f"RAG failed: {str(e)}"}), 500
 
 if __name__ == "__main__":
