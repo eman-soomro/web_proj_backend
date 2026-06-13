@@ -15,19 +15,23 @@ def home():
 
 @app.route("/forecast", methods=["POST"])
 def forecast():
-    data = request.json
-    domain = data.get("domain", "general")
-    keywords = data.get("keywords", [])
-    horizon = data.get("prediction_horizon", 30)
+    try:
+        data = request.json or {}
+        domain = data.get("domain", "general")
+        keywords = data.get("keywords", [])
+        horizon = data.get("prediction_horizon", 30)
 
-    trainer = TrainingAbstraction(domain, keywords, horizon)
-    results = trainer.run_training_pipeline()
-    return jsonify(results)
+        trainer = TrainingAbstraction(domain, keywords, horizon)
+        results = trainer.run_training_pipeline()
+        return jsonify(results)
+    except Exception as e:
+        # Return a clear error instead of generic 500
+        return jsonify({"error": f"Forecast failed: {str(e)}"}), 500
 
 @app.route("/rag", methods=["POST"])
 def rag_query():
     try:
-        data = request.json
+        data = request.json or {}
         keyword = data.get("keyword")
         if not keyword:
             return jsonify({"error": "Keyword is required"}), 400
@@ -36,7 +40,8 @@ def rag_query():
         results = rag.query(keyword, top_k=5)
         return jsonify(results)
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        # Return a clear error instead of generic 500
+        return jsonify({"error": f"RAG failed: {str(e)}"}), 500
 
 if __name__ == "__main__":
     import os
