@@ -10,16 +10,17 @@ class TrendRAG:
         if self.client is None:
             import weaviate
             from weaviate.auth import AuthApiKey
-            from weaviate.collections.config import Property, DataType
 
             cluster_url = os.getenv("WEAVIATE_CLUSTER_URL")
             api_key = os.getenv("WEAVIATE_API_KEY")
             if not cluster_url or not api_key:
                 raise Exception("Weaviate credentials missing")
 
+        
             self.client = weaviate.connect_to_weaviate_cloud(
                 cluster_url=cluster_url,
-                auth_credentials=AuthApiKey(api_key)
+                auth_credentials=AuthApiKey(api_key),
+                skip_init_checks=True  # avoids gRPC health check errors
             )
             if not self.client.is_connected():
                 raise Exception("Failed to connect to Weaviate")
@@ -29,11 +30,11 @@ class TrendRAG:
                 self.client.collections.create(
                     name="Paper",
                     properties=[
-                        Property(name="title", data_type=DataType.TEXT),
-                        Property(name="abstract", data_type=DataType.TEXT),
-                        Property(name="year", data_type=DataType.INT),
-                        Property(name="authors", data_type=DataType.TEXT),
-                        Property(name="citations", data_type=DataType.INT),
+                        {"name": "title", "dataType": "text"},
+                        {"name": "abstract", "dataType": "text"},
+                        {"name": "year", "dataType": "int"},
+                        {"name": "authors", "dataType": "text"},
+                        {"name": "citations", "dataType": "int"},
                     ]
                 )
         return self.client
@@ -62,7 +63,6 @@ class TrendRAG:
                     "citations": paper.get("citationCount", 0)
                 })
             except Exception as e:
-                # Log but don’t crash
                 print("Insert failed:", e)
 
     def query(self, keyword, top_k=5):
