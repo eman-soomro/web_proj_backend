@@ -62,6 +62,7 @@ class TrendRAG:
                     "citations": paper.get("citationCount", 0)
                 })
             except Exception as e:
+                # Log but don’t crash
                 print("Insert failed:", e)
 
     def query(self, keyword, top_k=5):
