@@ -16,7 +16,6 @@ class TrendRAG:
             if not cluster_url or not api_key:
                 raise Exception("Weaviate credentials missing")
 
-        
             self.client = weaviate.connect_to_weaviate_cloud(
                 cluster_url=cluster_url,
                 auth_credentials=AuthApiKey(api_key),
@@ -74,6 +73,7 @@ class TrendRAG:
                 vector=embedding,
                 limit=top_k
             )
-            return results.objects
+            # Return plain dicts for JSON serialization
+            return [obj.properties for obj in results.objects]
         except Exception as e:
             raise Exception(f"Query failed: {e}")
