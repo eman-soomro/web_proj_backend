@@ -3,7 +3,7 @@ gunicorn
 prophet
 pytrends
 sentence-transformers
-weaviate-client
+weaviate-client>=4.0.0,<5.0.0
 requests
 matplotlib
 pandas
