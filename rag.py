@@ -19,7 +19,7 @@ class TrendRAG:
             self.client = weaviate.connect_to_weaviate_cloud(
                 cluster_url=cluster_url,
                 auth_credentials=AuthApiKey(api_key),
-                skip_init_checks=True  # avoids gRPC health check errors
+                skip_init_checks=True
             )
             if not self.client.is_connected():
                 raise Exception("Failed to connect to Weaviate")
@@ -73,7 +73,6 @@ class TrendRAG:
                 vector=embedding,
                 limit=top_k
             )
-            # Return plain dicts for JSON serialization
             return [obj.properties for obj in results.objects]
         except Exception as e:
             raise Exception(f"Query failed: {e}")
