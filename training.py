@@ -4,7 +4,7 @@ from pytrends.request import TrendReq
 
 class TrainingAbstraction:
 
-    def __init__(self, domain, keywords, prediction_horizon=30, sleep_time=2):
+    def __init__(self, domain, keywords, prediction_horizon=30, sleep_time=5):
         self.domain = domain
         self.keywords = keywords
         self.prediction_horizon = prediction_horizon
