@@ -10,6 +10,7 @@ class TrendRAG:
         if self.client is None:
             import weaviate
             from weaviate.auth import AuthApiKey
+            from weaviate.collections.config import Property, DataType
 
             cluster_url = os.getenv("WEAVIATE_CLUSTER_URL")
             api_key = os.getenv("WEAVIATE_API_KEY")
@@ -25,15 +26,16 @@ class TrendRAG:
                 raise Exception("Failed to connect to Weaviate")
 
             # Ensure schema exists
-            if "Paper" not in [c.name for c in self.client.collections.list_all()]:
+            collections = [c.name for c in self.client.collections.list_all()]
+            if "Paper" not in collections:
                 self.client.collections.create(
                     name="Paper",
                     properties=[
-                        {"name": "title", "dataType": "text", "tokenization": "word"},
-                        {"name": "abstract", "dataType": "text", "tokenization": "word"},
-                        {"name": "year", "dataType": "int"},
-                        {"name": "authors", "dataType": "text", "tokenization": "word"},
-                        {"name": "citations", "dataType": "int"},
+                        Property(name="title", data_type=DataType.TEXT),
+                        Property(name="abstract", data_type=DataType.TEXT),
+                        Property(name="year", data_type=DataType.INT),
+                        Property(name="authors", data_type=DataType.TEXT),
+                        Property(name="citations", data_type=DataType.INT),
                     ]
                 )
         return self.client
