@@ -31,9 +31,9 @@ class TrainingAbstraction:
         matplotlib.use("Agg")  
         import matplotlib.pyplot as plt
 
-        plt.figure(figsize=(12, 6))
-        plt.scatter(historical_df["ds"], historical_df["y"], color="blue", marker="o", s=50, label="Historical")
-        plt.scatter(forecast_df["ds"], forecast_df["yhat"], color="red", marker="x", s=80, label="Forecast")
+        plt.figure(figsize=(8, 4))
+        plt.scatter(historical_df["ds"], historical_df["y"], color="blue", marker="o", s=30, label="Historical")
+        plt.scatter(forecast_df["ds"], forecast_df["yhat"], color="red", marker="x", s=50, label="Forecast")
 
         plt.title(f"Google Trends Forecast - {keyword}")
         plt.xlabel("Date")
@@ -43,7 +43,7 @@ class TrainingAbstraction:
 
         filename = f"{keyword.replace(' ', '_')}_forecast.png"
         filepath = os.path.join(self.graph_dir, filename)
-        plt.savefig(filepath, dpi=300, bbox_inches="tight")
+        plt.savefig(filepath, dpi=150, bbox_inches="tight")
         plt.close()
 
         # Return a public URL path
